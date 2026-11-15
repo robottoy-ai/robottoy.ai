@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>robottoy.ai deck</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fredoka:wght@500;600&display=swap">
+<style>
+  :root { --gum: #FFD6E4; --rasp: #D6336C; --rasp-deep: #B01E55; --plum: #3A0A22; --milk: #FFF7FA; }
+  html, body { margin: 0; min-height: 100svh; }
+  body { background: var(--gum); font-family: "Fredoka", "Trebuchet MS", sans-serif; color: var(--plum);
+         display: grid; place-items: center;
+         padding: 24px max(16px, env(safe-area-inset-left, 0px)) 24px max(16px, env(safe-area-inset-right, 0px)); }
+  .card { width: min(100%, 26rem); background: var(--milk); border-radius: 32px; padding: 44px 40px 40px;
+          box-shadow: 0 24px 70px rgba(58, 10, 34, .18); display: flex; flex-direction: column; gap: 18px;
+          align-items: center; text-align: center; box-sizing: border-box; }
+  svg { width: 110px; height: 110px; }
+  .word { font-weight: 600; font-size: 1.9rem; letter-spacing: -0.5px; }
+  .word b { font-weight: 600; color: var(--rasp); }
+  p { margin: 0; font-weight: 500; font-size: 1.05rem; line-height: 1.45; color: #6E2F4A; }
+  form { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+  input { width: 100%; box-sizing: border-box; min-height: 54px; padding: 12px 20px; font: inherit; font-size: 1.05rem;
+          color: var(--plum); background: #fff; border: 2px solid var(--rasp); border-radius: 999px; text-align: center; }
+  button { min-height: 54px; border: 0; border-radius: 999px; cursor: pointer; font: inherit; font-weight: 600;
+           font-size: 1.1rem; color: var(--milk); background: var(--rasp); }
+  button:hover { background: var(--rasp-deep); }
+  button:disabled { opacity: .6; cursor: wait; }
+  .msg { min-height: 1.3em; font-size: 0.98rem; color: var(--rasp-deep); }
+</style>
+</head>
+<body>
+<main class="card">
+  <svg viewBox="0 0 200 200" aria-hidden="true">
+    <path fill="#2F5BFF" fill-rule="evenodd" d="M100 38C88 14 56 10 54 32C52 54 88 54 100 38ZM81 32a7 7 0 1 0-14 0a7 7 0 1 0 14 0ZM100 38C112 14 144 10 146 32C148 54 112 54 100 38ZM133 32a7 7 0 1 0-14 0a7 7 0 1 0 14 0Z"/>
+    <rect x="92" y="34" width="16" height="40" rx="4" fill="#2F5BFF"/>
+    <rect x="30" y="66" width="140" height="120" rx="38" fill="#D6336C"/>
+    <rect x="64" y="104" width="22" height="42" rx="11" fill="#FFD6E4"/>
+    <rect x="114" y="104" width="22" height="42" rx="11" fill="#FFD6E4"/>
+  </svg>
+  <div class="word"><b>robot</b>toy.ai</div>
+  <p>This deck is private.<br>Enter the password you were given.</p>
+  <form id="f">
+    <input id="pw" type="password" autocomplete="current-password" placeholder="password" aria-label="Password" required>
+    <button id="go" type="submit">Open the deck</button>
+  </form>
+  <p class="msg" id="msg"></p>
+</main>
+<script>
+(function () {
+  var f = document.getElementById('f'), pw = document.getElementById('pw'),
+      go = document.getElementById('go'), msg = document.getElementById('msg');
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    go.disabled = true;
+    msg.textContent = 'Opening…';
+    open_(pw.value).catch(function () {
+      go.disabled = false;
+      msg.textContent = 'That password did not work.';
+      pw.select();
+    });
+  });
+  async function open_(password) {
+    var buf = await (await fetch('deck.bin')).arrayBuffer();
+    var bytes = new Uint8Array(buf);
+    // The file is OpenSSL's format: "Salted__", 8 bytes of salt, then the data.
+    var salt = bytes.slice(8, 16);
+    var data = bytes.slice(16);
+    var raw = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+    var keyiv = new Uint8Array(await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: salt, iterations: 600000, hash: 'SHA-256' }, raw, 384));
+    var key = await crypto.subtle.importKey('raw', keyiv.slice(0, 32), 'AES-CBC', false, ['decrypt']);
+    var plain = await crypto.subtle.decrypt({ name: 'AES-CBC', iv: keyiv.slice(32, 48) }, key, data);
+    var html = new TextDecoder().decode(plain);
+    if (html.indexOf('<!doctype html>') !== 0) throw new Error('wrong');
+    document.open();
+    document.write(html);
+    document.close();
+  }
+})();
+</script>
+</body>
+</html>
