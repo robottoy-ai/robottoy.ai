@@ -50,6 +50,16 @@
 (function () {
   var f = document.getElementById('f'), pw = document.getElementById('pw'),
       go = document.getElementById('go'), msg = document.getElementById('msg');
+  // A full share link carries the key after '#', so the deck opens with no typing.
+  var fromLink = decodeURIComponent(location.hash.slice(1) || '');
+  if (fromLink) {
+    msg.textContent = 'Opening…';
+    go.disabled = true;
+    open_(fromLink).catch(function () {
+      go.disabled = false;
+      msg.textContent = 'This link is not valid any more. Enter the password instead.';
+    });
+  }
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     go.disabled = true;
