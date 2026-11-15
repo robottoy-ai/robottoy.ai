@@ -293,6 +293,20 @@ h2 { font-weight: 600; font-size: clamp(2.1rem, 3.7vw, 3.3rem); line-height: 1.1
 .cta:focus-visible { outline-color: var(--key); }
 .morning .cta-note { font-size: 1rem; color: #8a4a66; margin-top: -8px; }
 .cta-note .addr { font-weight: 700; user-select: all; }
+
+/* The sign-up: one email field and the button, in the morning colours. */
+.signup { display: flex; flex-wrap: wrap; gap: 12px; max-width: 34rem; }
+.signup input {
+  flex: 1 1 15rem; min-height: 56px; padding: 12px 22px;
+  font: inherit; font-size: 1.15rem; color: var(--plum);
+  background: #fff; border: 2px solid var(--rasp); border-radius: 999px;
+}
+.signup input::placeholder { color: #a76a84; }
+.signup .cta { border: 0; cursor: pointer; }
+.signup-done { display: none; }
+.signup-done .ask { font-size: clamp(1.9rem, 2.7vw, 2.5rem); }
+.signed .signup, .signed .signup ~ .cta-note { display: none; }
+.signed .signup-done { display: block; }
 .foot {
   position: relative; max-width: 1320px; margin: 0 auto;
   padding-block: 22px max(22px, env(safe-area-inset-bottom, 0px));
@@ -488,8 +502,14 @@ h2 { font-weight: 600; font-size: clamp(2.1rem, 3.7vw, 3.3rem); line-height: 1.1
         <p class="ask">Still here in the morning.</p>
         <h2>Come home to a hello.</h2>
         <p>It starts with a small toy that looks up when you walk in. One day, it is a robot pet that meets you at the door.</p>
-        <a class="cta" href="mailto:achint@toyrobo.ai?subject=Tell%20me%20when%20it%27s%20ready">Tell me when it’s ready</a>
-        <p class="cta-note">This opens an email to <span class="addr">achint@toyrobo.ai</span>.</p>
+        <form class="signup" id="signup" action="https://assets.mailerlite.com/jsonp/2797113/forms/204187385421891040/subscribe" method="post" target="_blank">
+          <input type="email" name="fields[email]" required autocomplete="email" placeholder="you@email.com" aria-label="Your email address">
+          <input type="hidden" name="ml-submit" value="1">
+          <input type="hidden" name="anticsrf" value="true">
+          <button class="cta" type="submit">Tell me when it’s ready</button>
+        </form>
+        <p class="cta-note">One email when it is ready. Nothing else.</p>
+        <div class="signup-done"><p class="ask">You’re on the list. See you soon.</p></div>
       </div>
       <div class="big-lockup" role="img" aria-label="robottoy.ai">
         <svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mark"/></svg>
@@ -619,6 +639,30 @@ h2 { font-weight: 600; font-size: clamp(2.1rem, 3.7vw, 3.3rem); line-height: 1.1
     wind(); blink(); perform('hi', null);
   }
   bot.addEventListener('click', hi);
+  /* The sign-up form: send the email to the list without leaving the page. */
+  var signup = document.getElementById('signup');
+  if (signup) {
+    signup.addEventListener('submit', function (e) {
+      if (!window.fetch || !window.FormData) return;   /* old browser: the form posts normally */
+      e.preventDefault();
+      var button = signup.querySelector('button');
+      button.disabled = true;
+      fetch(signup.action, { method: 'POST', body: new FormData(signup) })
+        .then(function (r) { return r.json(); })
+        .then(function (out) {
+          if (out && out.success) {
+            signup.closest('.morning-copy').classList.add('signed');
+          } else {
+            throw new Error('not accepted');
+          }
+        })
+        .catch(function () {
+          button.disabled = false;
+          signup.submit();                             /* fall back to the plain post */
+        });
+    });
+  }
+
   bot.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hi(); }
   });
