@@ -34,7 +34,7 @@
 }
 
 * { box-sizing: border-box; }
-html { color-scheme: dark; scroll-behavior: smooth; }
+html { color-scheme: dark; scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; }
 body {
   margin: 0;
   background: var(--night);
@@ -44,6 +44,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  overflow-x: clip;    /* phones respect clip: no sideways panning into the morning curve's overhang */
 }
 h1, h2, p, ul { margin: 0; }
 ul { padding: 0; list-style: none; }
