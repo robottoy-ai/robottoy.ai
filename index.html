@@ -416,7 +416,7 @@ h2 { font-weight: 600; font-size: clamp(2.1rem, 3.7vw, 3.3rem); line-height: 1.1
           </g>
         </svg>
       </div>
-      <p class="caption" id="caption" aria-live="polite">waking up</p>
+      <p class="caption notranslate" id="caption" aria-live="polite" translate="no">waking up</p>
     </div>
 
     <div class="story">
@@ -543,11 +543,14 @@ h2 { font-weight: 600; font-size: clamp(2.1rem, 3.7vw, 3.3rem); line-height: 1.1
   var current = 'hello';
   var busy = null;
 
+  var sayTimer = null;
   function say(text) {
-    if (caption.textContent === text) return;
+    if (caption.dataset.now === text) return;
+    caption.dataset.now = text;
+    clearTimeout(sayTimer);                    /* one pending swap at a time */
     if (calm) { caption.textContent = text; return; }
     caption.classList.add('swap');
-    setTimeout(function () { caption.textContent = text; caption.classList.remove('swap'); }, 260);
+    sayTimer = setTimeout(function () { caption.textContent = text; caption.classList.remove('swap'); }, 260);
   }
 
   function apply(p) {
