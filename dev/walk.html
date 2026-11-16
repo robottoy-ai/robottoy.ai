@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Waddle Physics</title>
+<style>
+  :root { --bg:#faf7f2; --fg:#3a0a22; --mut:#8a7580; --gum:#d6336c; --card:#fff; --line:#eadfe5; --ok:#1d9e55; --bad:#d6336c; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; --card:#271a21; --line:#3a2a33; color-scheme:dark; } }
+  :root[data-theme="dark"] { --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; --card:#271a21; --line:#3a2a33; color-scheme:dark; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.5 -apple-system, system-ui, sans-serif;
+    padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:18px; }
+  main { max-width:620px; margin:0 auto; }
+  h1 { font-size:1.25rem; margin:0 0 4px; }
+  .sub { color:var(--mut); font-size:.88rem; margin:0 0 14px; }
+  canvas { width:100%; border:1px solid var(--line); border-radius:12px; background:var(--card); display:block; }
+  .ctrl { margin:12px 0 2px; }
+  .ctrl label { display:block; font-size:.85rem; color:var(--mut); margin:8px 0 0; }
+  .ctrl output { color:var(--fg); font-weight:600; }
+  input[type=range] { width:100%; accent-color: var(--gum); }
+  #verdict { font-weight:700; margin:10px 0 2px; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  .why { font-size:.85rem; color:var(--mut); }
+</style>
+</head>
+<body>
+<main>
+<h1>Why the one-motor waddle walks</h1>
+<p class="sub">Front view, our real dimensions. The rule of all walking: the weight (dot) must be over the foot that is on the ground. The crank rocks the body so the weight settles over one foot; the other foot is then weightless and swings forward free. Drag the sliders and find where it falls.</p>
+
+<canvas id="cv" width="640" height="420"></canvas>
+
+<div class="ctrl">
+  <label>Rock amplitude: <output id="o-amp">17</output>° (crank radius sets this)</label>
+  <input id="amp" type="range" min="4" max="26" value="17" step="1">
+  <label>Weight height (battery placement): <output id="o-com">73</output> mm</label>
+  <input id="com" type="range" min="50" max="130" value="73" step="1">
+  <label>Cadence: <output id="o-hz">1.8</output> steps/s</label>
+  <input id="hz" type="range" min="0.6" max="4" value="1.8" step="0.1">
+</div>
+<p id="verdict"></p>
+<p class="why" id="why"></p>
+<p class="why">Numbers behind it: feet centers ±35 mm, each sole 34 mm wide, so the weight must shift 18 mm sideways to free a foot. At 73 mm weight height that needs atan(18/73) = <b>13.9°</b> of rock — exactly what toy penguins visibly do. Energy to pump one rock: ~0.008 J; the N20 motor delivers hundreds of times that. Crank torque worst case ~0.8 kg·cm vs the motor's 2+ kg·cm. And the existence proof: "passive dynamic walkers" — the 1938 Wilson Walkie penguin toy — walk down a gentle ramp with <b>no motor at all</b>. The physics does the walking; our motor only replaces the ramp.</p>
+</main>
+<script>
+(() => {
+  const cv = document.getElementById('cv'), g = cv.getContext('2d');
+  const S = getComputedStyle(document.documentElement);
+  const css = n => S.getPropertyValue(n).trim();
+  const amp = document.getElementById('amp'), com = document.getElementById('com'), hz = document.getElementById('hz');
+  const oAmp = document.getElementById('o-amp'), oCom = document.getElementById('o-com'), oHz = document.getElementById('o-hz');
+  const verdict = document.getElementById('verdict'), why = document.getElementById('why');
+
+  // geometry (mm): feet centers +-35, sole width 34 -> inner edge 18, outer 52
+  const FOOT_X = 35, SOLE = 34, INNER = FOOT_X - SOLE/2;
+  const MM = 2.2, X0 = 320, Y0 = 360; // px scale and ground origin
+
+  function draw(t) {
+    const A = +amp.value * Math.PI/180, H = +com.value, F = +hz.value;
+    oAmp.value = amp.value; oCom.value = com.value; oHz.value = (+hz.value).toFixed(1);
+
+    const th = A * Math.sin(2*Math.PI*F/2 * t/1000); // body roll
+    // stance = side the body leans toward
+    const lean = Math.sin(2*Math.PI*F/2 * t/1000);
+    const stance = lean >= 0 ? 1 : -1; // +1 leaning right
+    // weight lateral position when rotating about stance sole center
+    const comX = stance*FOOT_X + Math.sin(-th + stance*A) * 0; // simplified below
+    // simpler, honest model: body pivots about stance foot center; CoM offset from pivot:
+    const comLat = stance*FOOT_X - stance*FOOT_X*Math.cos(th*0) + Math.sin(th)*H*0;
+    // Use direct: CoM x = sin(th) * H (body roll about mid), then check support
+    const cx = Math.sin(th) * H;
+    const liftedSide = cx > INNER ? -1 : (cx < -INNER ? 1 : 0); // which foot is free
+    const stable = Math.abs(cx) <= FOOT_X + SOLE/2;
+    const freeing = liftedSide !== 0;
+
+    // natural rock period vs cadence: too fast = feet slam, too slow = motor fights gravity longer (fine)
+    // natural rock frequency (pendulum estimate); two steps per rock cycle
+    const natHz = 2/(2*Math.PI*Math.sqrt(H/1000/9.81));
+    const tooFast = F > natHz*1.2;
+    const enough = Math.sin(A)*H >= INNER + 2; // peak weight shift clears the inner edge with 2 mm margin
+
+    g.clearRect(0,0,cv.width,cv.height);
+    // ground
+    g.strokeStyle = css('--mut'); g.lineWidth = 2;
+    g.beginPath(); g.moveTo(40, Y0+28); g.lineTo(600, Y0+28); g.stroke();
+
+    g.save();
+    g.translate(X0, Y0);
+    // feet
+    for (const s of [-1, 1]) {
+      const free = s === liftedSide && enough;
+      const liftH = free ? 14 * Math.min(1, (Math.abs(cx)-INNER)/10) : 0;
+      g.fillStyle = free ? css('--gum') : css('--fg');
+      g.globalAlpha = free ? 0.85 : 1;
+      g.fillRect(s*FOOT_X*MM - SOLE*MM/2, 16 - liftH, SOLE*MM, 12);
+      g.globalAlpha = 1;
+    }
+    // body (rolls)
+    g.save();
+    g.rotate(th);
+    g.fillStyle = css('--card') === '#fff' ? '#f1e8ec' : '#3a2a33';
+    g.strokeStyle = css('--mut'); g.lineWidth = 2;
+    g.beginPath(); g.ellipse(0, -95*MM/1.6, 66*MM/1.6, 95*MM/1.6, 0, 0, 7);
+    g.fill(); g.stroke();
+    // head
+    g.beginPath(); g.ellipse(0, -175*MM/1.6, 36*MM/1.6, 36*MM/1.6, 0, 0, 7);
+    g.fill(); g.stroke();
+    g.restore();
+    // CoM dot at height H, rolled
+    const dx = Math.sin(th)*H*MM, dy = -Math.cos(th)*H*MM;
+    g.fillStyle = (freeing && enough) ? css('--ok') : (stable ? css('--fg') : css('--bad'));
+    g.beginPath(); g.arc(dx, dy, 9, 0, 7); g.fill();
+    g.strokeStyle = g.fillStyle; g.setLineDash([4,4]);
+    g.beginPath(); g.moveTo(dx, dy); g.lineTo(dx, 16); g.stroke(); g.setLineDash([]);
+    // support zone of stance foot
+    g.strokeStyle = css('--ok'); g.lineWidth = 3;
+    const sz = cx >= 0 ? 1 : -1;
+    g.beginPath(); g.moveTo((sz*FOOT_X - SOLE/2)*MM, 34); g.lineTo((sz*FOOT_X + SOLE/2)*MM, 34); g.stroke();
+    g.restore();
+
+    if (!stable) {
+      verdict.textContent = 'FALLS OVER: the weight left the support. Too much rock for this geometry.';
+      verdict.className = 'bad';
+      why.textContent = 'Reduce the rock amplitude, or lower the weight (battery lower).';
+    } else if (!enough) {
+      verdict.textContent = 'STUCK: rocks, but never frees a foot. No step happens.';
+      verdict.className = 'bad';
+      why.textContent = 'The weight never clears a foot’s inner edge (' + INNER + ' mm). Needs ' + (Math.atan(INNER/+com.value)*180/Math.PI).toFixed(1) + '° of rock at this weight height — add crank radius or raise amplitude.';
+    } else if (tooFast) {
+      verdict.textContent = 'SKIPS: cadence is faster than the body’s natural rock (~' + natHz.toFixed(1) + ' steps/s). Feet slap, steps slip.';
+      verdict.className = 'bad';
+      why.textContent = 'Slow the crank. Driving near the natural frequency is nearly free — that’s the resonance trick.';
+    } else {
+      verdict.textContent = 'WALKS: each rock frees one foot (pink) while the weight (green dot) stands safely on the other.';
+      verdict.className = 'ok';
+      why.textContent = 'The freed foot swings forward ~15 mm; phases swap; repeat. Forward motion is just the side-to-side rock, ratcheted.';
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
