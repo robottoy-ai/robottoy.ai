@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v2 Layer Stack</title>
+<style>
+  :root { --bg:#faf7f2; --fg:#3a0a22; --mut:#8a7580; --gum:#d6336c; --card:#ffffff; --line:#eadfe5; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; --card:#271a21; --line:#3a2a33; color-scheme:dark; } }
+  :root[data-theme="dark"] { --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; --card:#271a21; --line:#3a2a33; color-scheme:dark; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.55 -apple-system, system-ui, sans-serif;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    padding-block:20px; }
+  main { max-width:620px; margin:0 auto; }
+  h1 { font-size:1.35rem; margin:0 0 4px; }
+  .sub { color:var(--mut); font-size:.9rem; margin:0 0 18px; }
+  .layer { background:var(--card); border:1px solid var(--line); border-left:5px solid var(--gum);
+    border-radius:12px; padding:12px 14px; margin:0 0 10px; }
+  .layer h2 { font-size:1rem; margin:0 0 2px; }
+  .layer h2 span { color:var(--gum); font-variant-numeric:tabular-nums; margin-right:6px; }
+  .what { margin:0 0 8px; font-size:.92rem; }
+  .row { font-size:.85rem; color:var(--mut); margin:3px 0; }
+  .row b { color:var(--fg); font-weight:600; }
+  .outer { opacity:.9; }
+  .note { color:var(--mut); font-size:.85rem; margin:18px 0 0; }
+  a { color:var(--gum); }
+</style>
+</head>
+<body>
+<main>
+<h1>Penguin v2 — the layer stack</h1>
+<p class="sub">Seven layers, one concern each, assembled top-down into the open back shell. A failure always belongs to exactly one layer. Outermost first. <a href="size/fit.html">See the parts in 3D</a>.</p>
+
+<div class="layer outer">
+  <h2><span>L7</span>Skin</h2>
+  <p class="what">The plush suit, zip-off. Fabric and stuffing only — zero electronics, zero function.</p>
+  <p class="row"><b>Contract:</b> goes on and off without tools; cut it open and you meet smooth plastic.</p>
+  <p class="row"><b>Test:</b> on/off 20 times; the dressed penguin passes the same tests as the naked one.</p>
+</div>
+
+<div class="layer">
+  <h2><span>L6</span>Sensing</h2>
+  <p class="what">Touch pads on the inner wall, mic behind a pinhole, camera behind its chest window, motion sensor.</p>
+  <p class="row"><b>Contract:</b> senses through 2.5&nbsp;mm shell + fur; thresholds set from measured touches (the v1 lesson).</p>
+  <p class="row"><b>Test:</b> pat detection through shell + fabric; overnight false-trigger soak.</p>
+</div>
+
+<div class="layer">
+  <h2><span>L5</span>Harness</h2>
+  <p class="what">The wiring is a named part: one loom, silicone wire, latching plugs, built on a pegboard from the pin map.</p>
+  <p class="row"><b>Contract:</b> every joint is a plug; any module swaps with zero soldering; one service loop into the head.</p>
+  <p class="row"><b>Test:</b> continuity 100%; every plug tugged at 2&nbsp;kg; the loom photo is the drawing of record.</p>
+</div>
+
+<div class="layer">
+  <h2><span>L4</span>Electronics</h2>
+  <p class="what">Battery (fused, padded, captive in its bay), both brains on standoffs, speaker, camera.</p>
+  <p class="row"><b>Contract:</b> boards never touch the wall; one power plug per board; bay closes with its own cover.</p>
+  <p class="row"><b>Test:</b> thermal soak under 45&nbsp;°C; a stalled motor cannot reboot a brain.</p>
+</div>
+
+<div class="layer">
+  <h2><span>L3</span>Actuation</h2>
+  <p class="what">4 servos, the one-motor waddle drive with 180°-phased cranks, feet, purr motor. Runs on a bare test plate before the shell exists.</p>
+  <p class="row"><b>Contract:</b> mounts only on numbered points; shafts exit only through bushings; jammed limb slips or cuts off in 2&nbsp;s.</p>
+  <p class="row"><b>Test:</b> 10,000 waddle + 10,000 gesture cycles; quieter than v1 at 30&nbsp;cm.</p>
+</div>
+
+<div class="layer">
+  <h2><span>L2</span>Fastening</h2>
+  <p class="what">Brass heat-set inserts in every boss, M2/M2.5 screws, threadlocker. Installed once, before anything else.</p>
+  <p class="row"><b>Contract:</b> everything above fastens only into inserts. No glue where a screw can be.</p>
+  <p class="row"><b>Test:</b> insert survives 5&nbsp;kg pull; 10 assemble/disassemble cycles.</p>
+</div>
+
+<div class="layer">
+  <h2><span>L1</span>Shell</h2>
+  <p class="what">The two body halves, head shell, foot shells — the only structural part. Bosses, channels, battery bay, windows are features of it.</p>
+  <p class="row"><b>Contract:</b> a numbered mounting-point map; halves key together only one way.</p>
+  <p class="row"><b>Test:</b> assembled empty: 70&nbsp;cm drop, screws cycle 10×, feet stand flat.</p>
+</div>
+
+<p class="note">Why layers: L3 + L4 start now on the bench (the round-1 parts order). L1 is drawn in parallel against the fit model and frozen when the bench locks dimensions. L5 takes an afternoon once L1 exists; L6 tunes on the real wall; L7 is sewn last. Pattern borrowed from Qoobo's rigid heart under a zip-off suit, and automotive looms that are their own part number.</p>
+</main>
+</body>
+</html>
