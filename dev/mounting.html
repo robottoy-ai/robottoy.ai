@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mounting Joints</title>
+<style>
+  :root { --bg:#faf7f2; --fg:#3a0a22; --mut:#8a7580; --gum:#d6336c; --card:#fff; --line:#eadfe5;
+          --shell:#d9cfd6; --brass:#c9a04e; --steel:#8d94a3; --part:#7da7d9; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; --card:#271a21; --line:#3a2a33;
+    --shell:#4a3a44; --brass:#c9a04e; --steel:#9aa2b2; --part:#5b84b8; color-scheme:dark; } }
+  :root[data-theme="dark"] { --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; --card:#271a21; --line:#3a2a33;
+    --shell:#4a3a44; --brass:#c9a04e; --steel:#9aa2b2; --part:#5b84b8; color-scheme:dark; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.55 -apple-system, system-ui, sans-serif;
+    padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:18px; }
+  main { max-width:620px; margin:0 auto; }
+  h1 { font-size:1.25rem; margin:0 0 4px; }
+  h2 { font-size:1.02rem; margin:22px 0 6px; }
+  p { font-size:.9rem; color:var(--mut); margin:6px 0; }
+  svg { width:100%; height:auto; background:var(--card); border:1px solid var(--line); border-radius:12px; }
+  table { border-collapse:collapse; width:100%; font-size:.85rem; margin-top:8px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--mut); font-weight:600; }
+  b.gum { color:var(--gum); }
+  text { font-family:-apple-system, system-ui, sans-serif; }
+</style>
+</head>
+<body>
+<main>
+<h1>How parts hold onto the shell</h1>
+<p>One joint, drawn in cross-section. This exact stack repeats ~30 times inside the penguin, and it is the same joint inside every gadget you own.</p>
+
+<h2>1. The joint, zoomed in</h2>
+<svg viewBox="0 0 640 330" role="img" aria-label="Cross-section of a boss with brass insert and screw">
+  <!-- shell wall -->
+  <rect x="40" y="250" width="560" height="28" fill="var(--shell)"/>
+  <text x="48" y="300" fill="var(--mut)" font-size="15">shell wall (2.5 mm, printed / molded)</text>
+  <!-- boss tower -->
+  <rect x="260" y="130" width="120" height="120" fill="var(--shell)"/>
+  <text x="392" y="200" fill="var(--mut)" font-size="15">boss: a tower that is PART of the shell,</text>
+  <text x="392" y="220" fill="var(--mut)" font-size="15">printed in the same piece</text>
+  <!-- insert -->
+  <rect x="295" y="130" width="50" height="62" fill="var(--brass)"/>
+  <path d="M295 136 h50 M295 148 h50 M295 160 h50 M295 172 h50 M295 184 h50" stroke="var(--card)" stroke-width="3" opacity=".5"/>
+  <text x="392" y="150" fill="var(--brass)" font-size="15" font-weight="700">brass insert: knurled sleeve,</text>
+  <text x="392" y="170" fill="var(--brass)" font-size="15">melted in once (10 s with an iron)</text>
+  <!-- part flange -->
+  <rect x="200" y="98" width="240" height="26" fill="var(--part)"/>
+  <text x="56" y="117" fill="var(--part)" font-size="15" font-weight="700">part's mounting ear / hole</text>
+  <!-- screw -->
+  <rect x="308" y="56" width="24" height="136" fill="var(--steel)"/>
+  <rect x="294" y="42" width="52" height="18" rx="4" fill="var(--steel)"/>
+  <text x="356" y="58" fill="var(--steel)" font-size="15" font-weight="700">M2 screw: bites the BRASS, never the plastic</text>
+  <text x="356" y="78" fill="var(--mut)" font-size="15">+ a drop of threadlocker = vibration-proof</text>
+</svg>
+<p>Why the brass matters: a screw cut straight into plastic strips after 2-3 services. The insert's knurls are melted into the plastic permanently, and steel-in-brass threads survive hundreds of services. <b class="gum">The screw clamps the part's ear flat onto the boss top — the part cannot slide, lift, or rattle.</b></p>
+
+<h2>2. A servo on two bosses</h2>
+<svg viewBox="0 0 640 230" role="img" aria-label="Servo held by two screws on two bosses">
+  <rect x="40" y="180" width="560" height="22" fill="var(--shell)"/>
+  <rect x="150" y="100" width="56" height="80" fill="var(--shell)"/>
+  <rect x="434" y="100" width="56" height="80" fill="var(--shell)"/>
+  <rect x="166" y="100" width="24" height="34" fill="var(--brass)"/>
+  <rect x="450" y="100" width="24" height="34" fill="var(--brass)"/>
+  <!-- servo body with ears -->
+  <rect x="220" y="60" width="200" height="80" rx="6" fill="var(--part)"/>
+  <rect x="140" y="74" width="80" height="18" fill="var(--part)"/>
+  <rect x="420" y="74" width="80" height="18" fill="var(--part)"/>
+  <circle cx="290" cy="46" r="14" fill="var(--steel)"/>
+  <rect x="170" y="30" width="16" height="70" fill="var(--steel)"/>
+  <rect x="454" y="30" width="16" height="70" fill="var(--steel)"/>
+  <text x="250" y="110" fill="var(--card)" font-size="16" font-weight="700">MG90S servo</text>
+  <text x="56" y="52" fill="var(--mut)" font-size="15">its two ears, two screws, two bosses</text>
+</svg>
+<p>The flanges ("ears") on every servo exist precisely for this. The motor's torque goes through the screws into the shell — never through glue or friction.</p>
+
+<h2>3. A board on four standoffs</h2>
+<svg viewBox="0 0 640 210" role="img" aria-label="PCB on four standoff bosses">
+  <rect x="40" y="160" width="560" height="22" fill="var(--shell)"/>
+  <rect x="120" y="110" width="40" height="50" fill="var(--shell)"/>
+  <rect x="480" y="110" width="40" height="50" fill="var(--shell)"/>
+  <rect x="130" y="110" width="20" height="24" fill="var(--brass)"/>
+  <rect x="490" y="110" width="20" height="24" fill="var(--brass)"/>
+  <rect x="90" y="84" width="460" height="22" rx="3" fill="var(--part)"/>
+  <rect x="132" y="40" width="16" height="70" fill="var(--steel)"/>
+  <rect x="492" y="40" width="16" height="70" fill="var(--steel)"/>
+  <text x="250" y="100" fill="var(--card)" font-size="15" font-weight="700">brain board</text>
+  <text x="56" y="30" fill="var(--mut)" font-size="15">board floats on towers; a drop never shocks the solder</text>
+</svg>
+
+<h2>4. Who screws into what (~30 inserts total)</h2>
+<table>
+  <tr><th>Part</th><th>Inserts</th><th>Held how</th></tr>
+  <tr><td>4 servos</td><td>8</td><td>2 per servo, through their ears</td></tr>
+  <tr><td>Waddle motor</td><td>2</td><td>Printed cradle clamped over it</td></tr>
+  <tr><td>ESP32 + speech brain + charger</td><td>10</td><td>Corner holes on standoffs</td></tr>
+  <tr><td>Stereo camera board</td><td>2</td><td>Its two mounting holes</td></tr>
+  <tr><td>Speaker</td><td>2</td><td>Retainer ring clamps its rim</td></tr>
+  <tr><td>Battery bay cover</td><td>4</td><td>Cover screws; the CELL itself is only padded, never screwed</td></tr>
+  <tr><td>Shell halves + head + feet</td><td>~6</td><td>Halves screw to each other's bosses</td></tr>
+  <tr><td>Touch pads, mic, IMU, purr motor</td><td>0</td><td>Taped / foam pockets — light parts need capture, not clamping</td></tr>
+</table>
+<p>So "everything on brass inserts" really means: <b class="gum">the heavy and the moving things screw into brass; the light things sit in shaped pockets; the battery is padded and captive, touched by no screw.</b> Insert kits come with the iron tip included; setting all ~30 is an evening.</p>
+</main>
+</body>
+</html>
