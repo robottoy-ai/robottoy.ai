@@ -15,13 +15,33 @@
   p { color:var(--mut); margin:0 0 12px; font-size:.9rem; }
   model-viewer { width:100%; height:72vh; background:transparent; }
   ul { font-size:.85rem; color:var(--mut); padding-left:18px; }
+  .tag { background:var(--fg); color:var(--bg); border:0; border-radius:10px;
+    padding:2px 8px; font-size:11px; white-space:nowrap; pointer-events:none;
+    opacity:.92; transform:translate(-50%,-50%); }
 </style>
 </head>
 <body>
 <h1>Penguin v2 — fit check (cutaway)</h1>
 <p>Left half of the shell removed. Every part at true size, every clearance verified against the body's measured cross-sections.</p>
 <script type="module" src="https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
-<model-viewer src="fit-preview.glb" camera-controls camera-orbit="100deg 82deg 0.55m" ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed"></model-viewer>
+<model-viewer src="fit-preview.glb" camera-controls camera-orbit="100deg 82deg 0.55m" ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed">
+  <button class="tag" slot="hotspot-1"  data-position="0.01m 0.116m 0.001m">head pan + tilt</button>
+  <button class="tag" slot="hotspot-2"  data-position="0.037m 0.097m 0m">wing servo (x2)</button>
+  <button class="tag" slot="hotspot-3"  data-position="0m 0.016m 0m">waddle motor</button>
+  <button class="tag" slot="hotspot-4"  data-position="0.035m 0.012m 0m">crank (x2)</button>
+  <button class="tag" slot="hotspot-5"  data-position="0.035m 0.004m 0.01m">foot plate</button>
+  <button class="tag" slot="hotspot-6"  data-position="0m 0.030m 0.018m">battery</button>
+  <button class="tag" slot="hotspot-7"  data-position="0m 0.026m -0.042m">USB-C</button>
+  <button class="tag" slot="hotspot-8"  data-position="0m 0.060m -0.034m">ESP32 board</button>
+  <button class="tag" slot="hotspot-9"  data-position="0m 0.092m -0.038m">speech brain</button>
+  <button class="tag" slot="hotspot-10" data-position="0m 0.062m 0.057m">speaker</button>
+  <button class="tag" slot="hotspot-11" data-position="0m 0.162m 0.033m">mic</button>
+  <button class="tag" slot="hotspot-12" data-position="0m 0.138m 0.045m">camera (later)</button>
+  <button class="tag" slot="hotspot-13" data-position="0m 0.182m 0.004m">touch pad</button>
+  <button class="tag" slot="hotspot-14" data-position="0m 0.085m 0.056m">touch pad</button>
+  <button class="tag" slot="hotspot-15" data-position="0.02m 0.060m -0.028m">motion sensor</button>
+  <button class="tag" slot="hotspot-16" data-position="0.02m 0.075m 0.042m">purr motor</button>
+</model-viewer>
 <ul>
   <li><b>Blue</b>: 4 servos — head pan + tilt, wing L + R</li>
   <li><b>Red</b>: battery (low, ballast) and foot plates</li>
