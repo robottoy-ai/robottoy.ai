@@ -25,18 +25,18 @@
 <body>
 <h1>How big should it be?</h1>
 <model-viewer id="mv"
-  src="penguin-20cm.glb"
+  src="penguin-design-20cm.glb"
   ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed"
   camera-controls touch-action="pan-y" shadow-intensity="1"
   alt="A simple penguin dummy for judging size">
 </model-viewer>
 <div class="sizes">
-  <button data-src="penguin-14cm.glb" aria-pressed="false">14 cm<br>hand</button>
-  <button data-src="penguin-20cm.glb" aria-pressed="true">20 cm<br>v2 build</button>
-  <button data-src="penguin-27cm.glb" aria-pressed="false">27 cm<br>today's plush</button>
+  <button data-src="penguin-design-20cm.glb" aria-pressed="true">Design<br>20 cm</button>
+  <button data-src="penguin-14cm.glb" aria-pressed="false">14 cm<br>dummy</button>
+  <button data-src="penguin-27cm.glb" aria-pressed="false">27 cm<br>dummy</button>
 </div>
-<p>Pick a size, then tap the cube button inside the viewer to place it on your real
-desk at true scale. This is a size dummy, not the design.</p>
+<p>Tap the cube button inside the viewer to place it on your real desk at true
+scale. "Design" is the Vizcom concept at the chosen v2 size.</p>
 <script>
   var mv = document.getElementById('mv');
   document.querySelectorAll('.sizes button').forEach(function (b) {
