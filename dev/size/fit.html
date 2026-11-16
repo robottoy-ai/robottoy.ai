@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v2 Fit Check</title>
+<style>
+  :root { --bg:#faf7f2; --fg:#3a0a22; --mut:#8a7580; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; color-scheme: dark; } }
+  :root[data-theme="dark"] { --bg:#1c1218; --fg:#f3e8ee; --mut:#a08898; color-scheme: dark; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:16px/1.5 -apple-system, system-ui, sans-serif;
+    padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); padding-block:16px; }
+  h1 { font-size:1.2rem; margin:0 0 4px; }
+  p { color:var(--mut); margin:0 0 12px; font-size:.9rem; }
+  model-viewer { width:100%; height:72vh; background:transparent; }
+  ul { font-size:.85rem; color:var(--mut); padding-left:18px; }
+</style>
+</head>
+<body>
+<h1>Penguin v2 — fit check (cutaway)</h1>
+<p>Left half of the shell removed. Every part at true size, every clearance verified against the body's measured cross-sections.</p>
+<script type="module" src="https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<model-viewer src="fit-preview.glb" camera-controls camera-orbit="100deg 82deg 0.55m" ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed"></model-viewer>
+<ul>
+  <li><b>Blue</b>: 4 servos — head pan + tilt, wing L + R</li>
+  <li><b>Red</b>: battery (low, ballast) and foot plates</li>
+  <li><b>Purple</b>: waddle cranks + speaker; <b>green</b>: the two brains at the back</li>
+  <li><b>Yellow</b>: touch pads, mic, motion sensor; <b>orange</b>: USB-C charger</li>
+</ul>
+</body>
+</html>
