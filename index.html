@@ -158,9 +158,12 @@ button { font: inherit; color: inherit; }
   font-family: var(--hand); font-weight: 700;
   font-size: clamp(1.6rem, 2.3vw, 2.1rem); line-height: 1.1;
   color: var(--blush); text-align: center; min-height: 1.2em;
-  transition: opacity 0.35s;
 }
-.caption.swap { opacity: 0; }
+/* New words are set first and fade in. No fade-out: swapping text mid-fade
+   leaves ghost letters on iPhones, which is how "hello" once printed itself
+   into the middle of "tap me to say hi". */
+@keyframes caption-in { from { opacity: 0; } to { opacity: 1; } }
+.caption.swap-in { animation: caption-in 0.3s ease; }
 
 /* ---------- the story ---------- */
 .story { padding-bottom: 16vh; }
@@ -544,14 +547,14 @@ h2 { font-weight: 600; font-size: clamp(2.1rem, 3.7vw, 3.3rem); line-height: 1.1
   var current = 'hello';
   var busy = null;
 
-  var sayTimer = null;
   function say(text) {
     if (caption.dataset.now === text) return;
     caption.dataset.now = text;
-    clearTimeout(sayTimer);                    /* one pending swap at a time */
-    if (calm) { caption.textContent = text; return; }
-    caption.classList.add('swap');
-    sayTimer = setTimeout(function () { caption.textContent = text; caption.classList.remove('swap'); }, 260);
+    caption.textContent = text;
+    if (calm) return;
+    caption.classList.remove('swap-in');
+    void caption.offsetWidth;                  /* restart the fade-in from the top */
+    caption.classList.add('swap-in');
   }
 
   function apply(p) {
