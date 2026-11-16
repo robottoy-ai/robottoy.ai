@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Penguin size test</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&display=swap">
+<script type="module" src="https://unpkg.com/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+  :root { --gum: #FFD6E4; --rasp: #D6336C; --plum: #3A0A22; --milk: #FFF7FA; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--gum); font-family: "Fredoka", sans-serif; color: var(--plum);
+         display: flex; flex-direction: column;
+         padding: 0 max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-size: 1.3rem; font-weight: 600; margin: 14px 4px 8px; }
+  model-viewer { width: 100%; flex: 1; min-height: 60vh; background: var(--milk); border-radius: 24px; }
+  .sizes { display: flex; gap: 10px; margin: 12px 0 4px; }
+  .sizes button { flex: 1; min-height: 52px; border: 2px solid var(--rasp); border-radius: 999px;
+                  background: var(--milk); color: var(--plum); font: inherit; font-weight: 600; cursor: pointer; }
+  .sizes button[aria-pressed="true"] { background: var(--rasp); color: var(--milk); }
+  p { margin: 6px 4px 0; font-size: 0.95rem; line-height: 1.4; }
+</style>
+</head>
+<body>
+<h1>How big should it be?</h1>
+<model-viewer id="mv"
+  src="penguin-20cm.glb"
+  ar ar-modes="scene-viewer webxr quick-look" ar-scale="fixed"
+  camera-controls touch-action="pan-y" shadow-intensity="1"
+  alt="A simple penguin dummy for judging size">
+</model-viewer>
+<div class="sizes">
+  <button data-src="penguin-14cm.glb" aria-pressed="false">14 cm<br>hand</button>
+  <button data-src="penguin-20cm.glb" aria-pressed="true">20 cm<br>v2 build</button>
+  <button data-src="penguin-27cm.glb" aria-pressed="false">27 cm<br>today's plush</button>
+</div>
+<p>Pick a size, then tap the cube button inside the viewer to place it on your real
+desk at true scale. This is a size dummy, not the design.</p>
+<script>
+  var mv = document.getElementById('mv');
+  document.querySelectorAll('.sizes button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.sizes button').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+      b.setAttribute('aria-pressed', 'true');
+      mv.src = b.dataset.src;
+    });
+  });
+</script>
+</body>
+</html>
